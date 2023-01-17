@@ -61,4 +61,76 @@ function mergeSort(arr) {
   return mergeArr(leftArr, rightArr); // When the base case is satisfied, the single value inside leftArr or rightArr no longer undergo mergeSort. They become parameters for mergeArr, which returns a sorted array of values. In the merging process, these arrays are continuously compared and merged in mergeArr until they return the final sorted array.
 }
 
-output.textContent = mergeSort(arr);
+// Heapsort
+
+function heapSort(arr) {
+  const sortedArr = []; // Initializes an empty array that will contain the sorted elements.
+  const newHeap = new MaxHeap(); // Creates a new heap through the MaxHeap class.
+
+  for (let i = 0; i < arr.length; i++) {
+    newHeap.insert(arr[i]); // Inserts array element into heap following the instructions of the custom .insert() method in MaxHeap. When the loop finishes, the resulting heap's root node is the largest element.
+  }
+  for (let i = 0; i < arr.length; i++) {
+    sortedArr.push(newHeap.delete()); // Takes out the root node (largest element) from the heap array and inserts it into the final, sorted array. The last element in the heap becomes the root node. The .delete() method in MaxHeap moves the next largest element up into the root node.  
+  }
+
+  return sortedArr; // This final array contains all original elements sorted in descending order.
+}
+
+// MaxHeap class; this implementation utilizes a maximum heap which has more practical application compared to a minimum heap.
+
+class MaxHeap {
+  constructor() {
+    this.heap = []; // Initiates a heap in array form. 
+  }
+
+  parentIndex(index) {
+    return Math.floor((index-1)/2); // Returns the index of the current node's parent. 
+  }
+
+  leftChildIndex(index) {
+    return (2*index + 1); // Returns the index of the current node's left child.
+  }
+
+  rightChildIndex(index) {
+    return (2*index + 2); // Returns the index of the current node's right child.
+  }
+
+  swap(a,b) { // Swap nodes between indexes a and b.
+    let temp = this.heap[a];
+    this.heap[a] = this.heap[b];
+    this.heap[b] = temp;
+  } 
+
+  insert(element) {
+    this.heap.push(element); // Inserts new element into the last node (either bottom, rightmost node or the first leftmost node of a new level).
+    let currentNodeIndex = this.heap.length - 1; // Initially assigns the index of the last node of the heap to the variable, currentNodeIndex; 'bubbling up'.
+    let parentNodeIndex = this.parentIndex(currentNodeIndex); // Assigns the parent index of this node to the variable, parentNodeIndex.
+    while (this.heap[parentNodeIndex] && this.heap[parentNodeIndex] < this.heap[currentNodeIndex]) { // Execute loop while there exists a parent of the current node AND that parent node is less than the current node.
+      this.swap(parentNodeIndex, currentNodeIndex); // Swap current node with parent node. The current node is now one level up the heap.
+      currentNodeIndex = this.parentIndex(currentNodeIndex); // Bubbling up, currentNodeIndex is now one level up, referencing the position of its original parent node.
+      parentNodeIndex = this.parentIndex(currentNodeIndex); // Bubbling up, parentNodeIndex is the parent node index of the current node defined in previous statement.
+    } // Exit loop when you reach a node with no parent OR the parent node is greater than the current node.
+  } // Once every element undergoes this method, the largest element is pushed to the top of the heap.
+
+  delete() {
+    const root = this.heap.shift(); // The root node (first element) is logically the greatest element. It is removed and assigned to the variable, root.
+    this.heap.unshift(this.heap.pop()); // Removes the last element of the heap and places it into the empty root node.
+    let currentNodeIndex = 0; // Initiates an index of 0 at the root node; 'bubbling down'.
+    let leftChild = this.leftChildIndex(currentNodeIndex); // Assigns left child of current node (initially for root) to variable, leftChild.
+    let rightChild = this.rightChildIndex(currentNodeIndex); // Assigns right child of current node (initially for root) to variable, rightChild.
+    while(this.heap[leftChild] && this.heap[leftChild] > this.heap[currentNodeIndex] || this.heap[rightChild] > this.heap[currentNodeIndex]){ // Execute loop while there exists a left child AND if the left OR right child in this level are greater than the current parent node.
+        let max = leftChild; // The left node is declared as the max.
+        if (this.heap[rightChild] && this.heap[rightChild] > this.heap[max]) { // Check if a right child node exists AND it is greater than its sibling, left node.
+            max = rightChild // If so, declare the right node as the max.
+        }
+        this.swap(max, currentNodeIndex); // The child node with the larger value, max, gets swapped with its parent node.
+        currentNodeIndex = max; // Bubbling down, the node that was swapped to a lower level now becomes the max node.
+        leftChild = this.leftChildIndex(max); // Reassign the new left node of the current node.
+        rightChild = this.rightChildIndex(max); // Reassign the new right node of the current node. 
+    }
+    return root; // Return the root node. This is placed into the final, sorted heap. 
+  }
+}
+
+output.textContent = heapSort(arr);
