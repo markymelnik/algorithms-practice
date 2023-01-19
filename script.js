@@ -201,4 +201,42 @@ function countingSort(arr, n = arr.length) {
   return outputArr; // Return the final, sorted array once the last for loop exits. 
 }
 
-output.textContent = countingSort(arr);
+//
+// Radix Sort
+//
+
+function radixSort(arr) {
+  let maxDigitCount = mostDigits(arr); // Assign maxDigitCount to the digit count of the largest number in the parameter array.
+
+  for (let k = 0; k < maxDigitCount; k++) { // This for loop executes a number of times equal to the maxDigitCount. This ensures that every digit of every number in the parameter array is looked at. Starting from the lowest place and ending at the highest place, each iteration sorts the numbers in the current place.
+    let tempArr = Array.from({ length: 10 }, () => []); // Create an array containing 10 subarrays, each to hold a value from 0 to 9, respectively.
+
+    for (let i = 0; i < arr.length; i++) { // For each number at a specific place in the original array...
+      let digit = getDigit(arr[i], k); // ... assign digit variable to the specified digit, k, of its corresponding number, arr[i].
+
+      tempArr[digit].push(arr[i]); // ...push the number in the digit variable into the tempArr subarray, whose index is the same value as the specified digit. This sorts the numbers, in the current place being observed, in ascending order. 
+    } 
+
+  arr = [].concat(...tempArr); // Once every place has been observed, the for loop exits and concat() is called to merge the 10 subarrays into a single array.
+  }
+  return arr; // The single, sorted array is returned. 
+}
+
+function getDigit(num, place) { // Returns the number at the specified place.
+  return Math.floor(Math.abs(num) / Math.pow(10, place)) % 10;
+}
+
+function digitCount(num) { // Returns the digit count of the number.
+  if (num === 0) return 1; // If the number is 0, return 1 since you have a single digit.
+  return Math.floor(Math.log10(Math.abs(num))) + 1; // Return the rounded-down, base 10 logarithm of the absolute value of the parameter, num.
+}
+
+function mostDigits(nums) { // Returns the digit count of the largest number in the parameter array, nums.
+  let maxDigits = 0; // Initial assignment of maxDigits to 0.
+  for (let i = 0; i < nums.length; i++) { // For every number in the parameter array...
+    maxDigits = Math.max(maxDigits, digitCount(nums[i])); // ...return the digit count of the largest number in the parameter array, nums.
+  }
+  return maxDigits; // Return the largest digit count to be used to determine the number of places to loop through.
+}
+
+output.textContent = radixSort(arr);
