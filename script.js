@@ -10,7 +10,9 @@ container.append(output);
 
 const arr = [5, 8, 4, 2, 1, 3, 9, 7, 6];
 
+//
 // Insertion Sort
+//
 
 function insertionSort(arr) {
   let n = arr.length;
@@ -28,7 +30,9 @@ function insertionSort(arr) {
   return arr; // Return new array when for loop conditions are no longer met. This array is sorted in ascending order.
 }
 
+//
 // Merge Sort
+//
 
 // This function merges two 'sorted' arrays. A 'sorted' array is an array that contains 0 or 1 value(s).
 
@@ -61,7 +65,9 @@ function mergeSort(arr) {
   return mergeArr(leftArr, rightArr); // When the base case is satisfied, the single value inside leftArr or rightArr no longer undergo mergeSort. They become parameters for mergeArr, which returns a sorted array of values. In the merging process, these arrays are continuously compared and merged in mergeArr until they return the final sorted array.
 }
 
-// Heapsort
+//
+// Heap Sort
+//
 
 function heapSort(arr) {
   const sortedArr = []; // Initializes an empty array that will contain the sorted elements.
@@ -133,7 +139,9 @@ class MaxHeap {
   }
 }
 
-// Quicksort
+//
+// Quick Sort
+//
 
 function quickSort(arr, start = 0, end = arr.length - 1) { // Takes an array of elements to be sorted, a start index, and an end index as parameters.
   if (start >= end) return; // Base case; returns the array that is empty or has 1 element. This array can not longer be partitioned.
@@ -161,5 +169,36 @@ function swapValues(arr, a, b) { // Helper function.
   arr[b] = temp;
 }
 
-quickSort(arr);
-output.textContent = arr;
+//
+// Counting Sort
+//
+
+
+function countingSort(arr, n = arr.length) {
+
+  let k = Math.max(...arr); // Returns the largest element in the parameter array.
+  let count = 0; // Initializes a count variable and assigns an initial value of 0.
+
+  const tempArr = new Array(k+1).fill(0); // Creates a temporary array with a length one more than the value of the largest element and fills every index with a 0.
+
+  for (let i = 0; i < n; i++) { // For every element in the parameter array...
+    count = arr[i]; // ...count is assigned to the element at the current index of the parameter array. This element value is present at least once.
+    tempArr[count]++; // Since this element is present at least once, that element's corresponding index value in tempArr, representing frequency, is incremeneted by 1.
+  } // When the for loop exits, each tempArr element represents the frequency of each number (tempArr index) in the original, unsorted array.
+
+  for (let i = 1; i <= k; i++) { // Update the count based on the previous index.
+    tempArr[i] = tempArr[i] + tempArr[i-1]; // Update the elements of the frequency array to track cumulative values present at an index, from start to end.
+  } // When the for loop exits, the cumulative value information in the array is used to place element x directly into its position in the output array.
+
+  const outputArr = new Array(n).fill(0); // Creates a new output array which will contain the sorted elements.
+
+  for (let i = n - 1; i >= 0; i--) { // For every element in the parameter array and the temporary array with elements representing cumulative values...
+    count = arr[i]; // Assign count to the element at the current index of the parameter array.
+    outputArr[tempArr[count] - 1] = count; // Retrieve the frequency of that value inside tempArr and subtract this value by 1. This will be the new location of the element from the original array. Assign count to that index in outputArr.
+    tempArr[count] = tempArr[count] - 1; // Decrement the cumulative frequency by 1 to indicate that index in outputArr now contains the correct element.
+  }
+
+  return outputArr; // Return the final, sorted array once the last for loop exits. 
+}
+
+output.textContent = countingSort(arr);
