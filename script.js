@@ -239,4 +239,22 @@ function mostDigits(nums) { // Returns the digit count of the largest number in 
   return maxDigits; // Return the largest digit count to be used to determine the number of places to loop through.
 }
 
-output.textContent = radixSort(arr);
+//
+// Bucket Sort
+//
+
+const bucketSort = (arr, n = arr.length - 1) => {
+
+  const min = Math.min(...arr); // Finds minimum value in the parameter array.
+  const max = Math.max(...arr); // Finds maximum value in the parameter array.
+
+  const buckets = Array.from({ length: Math.floor((max - min) / n) + 2 }, () => []); // Creates a new array with 'buckets' where the input elements will be stored.
+  // The elements in the current input array require 2 buckets.
+  arr.forEach(el => {
+    buckets[Math.floor((el - min) / n)].push(el); // Take each element and calculate the bucket it will be pushed into inside the buckets array.
+  });
+
+  return buckets.reduce((acc, b) => [...acc, ...b.sort((a, b) => a - b)], []); // Once every element has been placed into its respective bucket, combine the buckets into a single array. This array contains elements sorted in ascending order.  
+};
+
+output.textContent = bucketSort(arr);
