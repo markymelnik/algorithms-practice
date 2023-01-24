@@ -281,4 +281,4 @@ const bubbleSort = (arr) => {
 // Output
 //
 
-output.textContent = insertionSort(arr);
+output.textContent = bubbleSort(arr);
