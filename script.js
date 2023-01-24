@@ -11,23 +11,33 @@ container.append(output);
 const arr = [5, 8, 4, 2, 1, 3, 9, 7, 6];
 
 //
+// Value Swap helper function
+//
+
+function swapValues(arr, a, b) { // Helper function.
+  let temp = arr[a];
+  arr[a] = arr[b];
+  arr[b] = temp;
+}
+
+//
 // Insertion Sort
 //
 
 function insertionSort(arr) {
   let n = arr.length;
-
+  // Invariant condition: For every loop iteration, elements in arr[1...i-1] are the elements originally in positions 1 through i-1, but are now in sorted order.
   for (let i = 0; i < n; i++) {
-    let currentValue = arr[i]; // Current value at current index. It is 'taken out' of array if while loop conditions are met and placed back into a 'sorted sequence' array upon exiting the while loop.
-    let j = i - 1; // The previous index.
+    let currentValue = arr[i]; // Current value at index i; this key is inserted into the ordered sequence arr[1...i-1].
+    let j = i - 1; // A pointer to the index before i, j.
 
-    while ((j > -1) && (arr[j] > currentValue)) {
-      arr[j + 1] = arr[j]; // If array contains previous index and current value < previous value, assign value at previous index to current index.
-      j--; // Move down one index and repeat previous statement until either an invalid index is reached or current value > previous value.
+    while ((j > -1) && (arr[j] > currentValue)) { // While j points to a valid index preceeding i and the element at i-1, or j, is greater than the next element at i...
+      arr[j + 1] = arr[j]; // ...the element at index i-1, or j, is assigned to the proceeding index at i, or j+1.
+      j--; // Move the pointer down one index and repeat previous statement until one of the while loop conditions are no longer met.
     }
-    arr[j + 1] = currentValue; // When one of the while loop conditions are no longer met, assign current 'taken out' value to the index you are currently on.
+    arr[j + 1] = currentValue; // Upon exiting the while loop, signifying that either the preceeding element at j is not greater than the current element at i OR that j points to index -1 (non-existent), currentValue is assigned to the current index, i, or j+1. The loop invariant ensures that all elements in arr[1...i-1] are sorted in order for every loop iteration.
   }
-  return arr; // Return new array when for loop conditions are no longer met. This array is sorted in ascending order.
+  return arr; // Return new array when the for loop exits. This array contains the original elements sorted in ascending order.
 }
 
 //
@@ -163,12 +173,6 @@ function paritionArr(arr, start, end) {
   return indexPointer; // This value will determine the end of the new left array and the start of the new right array when assigned back to paritionIndex in quickSort.
 }
 
-function swapValues(arr, a, b) { // Helper function.
-  let temp = arr[a];
-  arr[a] = arr[b];
-  arr[b] = temp;
-}
-
 //
 // Counting Sort
 //
@@ -206,6 +210,7 @@ function countingSort(arr, n = arr.length) {
 //
 
 function radixSort(arr) {
+
   let maxDigitCount = mostDigits(arr); // Assign maxDigitCount to the digit count of the largest number in the parameter array.
 
   for (let k = 0; k < maxDigitCount; k++) { // This for loop executes a number of times equal to the maxDigitCount. This ensures that every digit of every number in the parameter array is looked at. Starting from the lowest place and ending at the highest place, each iteration sorts the numbers in the current place.
@@ -257,4 +262,23 @@ const bucketSort = (arr, n = arr.length - 1) => {
   return buckets.reduce((acc, b) => [...acc, ...b.sort((a, b) => a - b)], []); // Once every element has been placed into its respective bucket, combine the buckets into a single array. This array contains elements sorted in ascending order.  
 };
 
-output.textContent = bucketSort(arr);
+//
+// Bubble Sort
+//
+
+const bubbleSort = (arr) => {
+  for (let i = 0; i < arr.length - 1; i++) { // For every element in the parameter array...
+    for (let j = 0; j < (arr.length - i - 1); j++) { // ... and for every pair of adjacent elements. After each iteration, the greatest value becomes the last index of the array. Logically, one less element is looked at with each successive loop. So for every iteration, one less element is looked at, hence the - 1 after arr.length - i.
+      if (arr[j] > arr[j+1]) { // If the current element in greater than the next element...
+        swapValues(arr, j, j+1); // ...swap elements.
+      }
+    }
+  }
+  return arr; // Return the final, sorted array with elements in ascending order. 
+}
+
+//
+// Output
+//
+
+output.textContent = insertionSort(arr);
