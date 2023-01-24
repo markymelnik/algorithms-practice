@@ -24,7 +24,7 @@ function swapValues(arr, a, b) { // Helper function.
 // Insertion Sort
 //
 
-function insertionSort(arr) {
+const insertionSort = (arr) => {
   let n = arr.length;
   // Invariant condition: For every loop iteration, elements in arr[1...i-1] are the elements originally in positions 1 through i-1, but are now in sorted order.
   for (let i = 0; i < n; i++) {
@@ -44,35 +44,35 @@ function insertionSort(arr) {
 // Merge Sort
 //
 
-// This function merges two 'sorted' arrays. A 'sorted' array is an array that contains 0 or 1 value(s).
+// This function merges two arrays each containing a sorted subsequence of the original elements. A sorted subsequence can be an array with 0 or 1 elements(s).
 
-function mergeArr(leftArr, rightArr) {
-  let sortedArr = []; // Initiate an empty array which will serve as a 'sorted' array throughout the implementation.
+const mergeArr = (leftArr, rightArr) => {
+  let sortedArr = []; // Initiate an empty array which will contain a sorted subsequence of elements (with the exclusion of the last, largest element in some cases).
 
-  while (leftArr.length && rightArr.length) {
-    if (leftArr[0] < rightArr[0]) {
-      sortedArr.push(leftArr.shift()); // If the first value of left array < first value of right array, remove this left value and place into sorted array.
+  while (leftArr.length && rightArr.length) { // Since .shift() removes the first element from the array, the proceeding element logically becomes the new first element. This is why the first elements of leftArr and rightArr are always compared until there are no elements remaining in one of the arrays.
+    if (leftArr[0] < rightArr[0]) { 
+      sortedArr.push(leftArr.shift()); // If the first element of the left array is less than the first element of the right array, remove this element and push it into the sorted array. 
     } else {
-      sortedArr.push(rightArr.shift()); // Else remove this right value and place into sorted array.
+      sortedArr.push(rightArr.shift()); // Else remove the first element from the right array and push it into the sorted array.
     }
-  } // Repeat sorting by comparison until either the left or right arrays have no values.
+  } // Repeat sorting by comparison until either leftArr or rightArr are empty. Once either array is empty, there is no more comparison to be made.
 
-  return [...sortedArr, ...leftArr, ...rightArr]; // Return an array that contains the sorted sequence at each step of the merging process. The final return array is an array with all original values sorted in ascending order.
+  return [...sortedArr, ...leftArr, ...rightArr]; // Returns a merged array containing a sorted subsequence in every recursive mergeSort call. Since this implementation may result in either leftArr or rightArr containing one element with no other element to compare to, leftArr and rightArr are included here to ensure that remaining element is included at the end. Logically, this element is the largest element of the particular subsequence. 
 }
 
-// This function recursively breaks down the initial, unsorted array into arrays of 0 or 1 value(s). When the base case is satisfied, arrays are compared and merged.
+// This function recursively breaks down the initial, unsorted array into arrays of 0 or 1 value(s). When the base case is satisfied, these arrays are compared and merged through the mergeArr function.
 
-function mergeSort(arr) {
-  if (arr.length < 2) return arr; // Base case; when the parameter array contains 1 or 0 value(s); it is returned to the respective leftArr or rightArr variable.
+const mergeSort = (arr) => {
+  if (arr.length < 2) return arr; // Base case; when the parameter array contains 1 or 0 value(s), it is returned to the respective leftArr or rightArr variable and the recursive calls in the call stack begin executing.
 
   let middleOfArr = Math.floor(arr.length / 2); // Calculate the middle index of the array and assign that value to the middleOfArr variable.
 
-  let leftArr = mergeSort(arr.slice(0, middleOfArr)); // A new left array is populated with values left of the determined middle point (exlusive).
-  let rightArr = mergeSort(arr.slice(middleOfArr)); // A new right array is populated with values right of the determined middle point (inclusive).
+  let leftArr = mergeSort(arr.slice(0, middleOfArr)); // mergeSort() is called recursively to further divide the left array into left and right subarrays.
+  let rightArr = mergeSort(arr.slice(middleOfArr)); // mergeSort() is called recursively to futher divide the right array into left and right subarrays.
 
-  // These arrays undergo recursive mergeSort calls until the base case is satisfied.
+  // Arrays are subdivided into two arrays until the base case is satisfied.
 
-  return mergeArr(leftArr, rightArr); // When the base case is satisfied, the single value inside leftArr or rightArr no longer undergo mergeSort. They become parameters for mergeArr, which returns a sorted array of values. In the merging process, these arrays are continuously compared and merged in mergeArr until they return the final sorted array.
+  return mergeArr(leftArr, rightArr); // When the base case is satisfied for an array, that array is no longer divided into two subarrays. Pairs of element sequences are merged and sorted through comparison until the final sorted sequence is returned.
 }
 
 //
@@ -281,4 +281,4 @@ const bubbleSort = (arr) => {
 // Output
 //
 
-output.textContent = bubbleSort(arr);
+output.textContent = mergeSort(arr);
