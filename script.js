@@ -76,6 +76,22 @@ const mergeSort = (arr) => {
 }
 
 //
+// Bubble Sort
+//
+
+const bubbleSort = (arr) => {
+  for (let i = 0; i < arr.length - 1; i++) { // For every element in the parameter array...
+    for (let j = 0; j < (arr.length - i - 1); j++) { // ... and for every pair of adjacent elements...
+      if (arr[j] > arr[j+1]) { // ...if the current element in greater than the next element...
+        swapValues(arr, j, j+1); // ...then swap elements.
+      }
+      // After each loop iteration, the largest element is moved to the last index. Since this element is now in its correct position, that index is no longer useful for sorting the remaining elements. The proceeding loop will now perform the comparison procedure on one less index, hence the shortening of the index range by 1 after every iteration. 
+    }
+  }
+  return arr; // Return the final, sorted array with elements in ascending order. 
+}
+
+//
 // Heap Sort
 //
 
@@ -263,22 +279,7 @@ const bucketSort = (arr, n = arr.length - 1) => {
 };
 
 //
-// Bubble Sort
-//
-
-const bubbleSort = (arr) => {
-  for (let i = 0; i < arr.length - 1; i++) { // For every element in the parameter array...
-    for (let j = 0; j < (arr.length - i - 1); j++) { // ... and for every pair of adjacent elements. After each iteration, the greatest value becomes the last index of the array. Logically, one less element is looked at with each successive loop. So for every iteration, one less element is looked at, hence the - 1 after arr.length - i.
-      if (arr[j] > arr[j+1]) { // If the current element in greater than the next element...
-        swapValues(arr, j, j+1); // ...swap elements.
-      }
-    }
-  }
-  return arr; // Return the final, sorted array with elements in ascending order. 
-}
-
-//
 // Output
 //
 
-output.textContent = mergeSort(arr);
+output.textContent = bubbleSort(arr);
