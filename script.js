@@ -95,21 +95,22 @@ const bubbleSort = (arr) => {
 // Heap Sort
 //
 
-function heapSort(arr) {
-  const sortedArr = []; // Initializes an empty array that will contain the sorted elements.
+const heapSort = (arr) => {
+  const sortedArr = []; // Initializes an empty array that will contain the sorted sequence of elements.
   const newHeap = new MaxHeap(); // Creates a new heap through the MaxHeap class.
 
   for (let i = 0; i < arr.length; i++) {
-    newHeap.insert(arr[i]); // Inserts array element into heap following the instructions of the custom .insert() method in MaxHeap. When the loop finishes, the resulting heap's root node is the largest element.
-  }
-  for (let i = 0; i < arr.length; i++) {
-    sortedArr.push(newHeap.delete()); // Takes out the root node (largest element) from the heap array and inserts it into the final, sorted array. The last element in the heap becomes the root node. The .delete() method in MaxHeap moves the next largest element up into the root node.  
+    newHeap.createMaxHeap(arr[i]); // Inserts array element into the heap. When the loop exits, the resulting heap satisfies the maximum heap property.
   }
 
-  return sortedArr; // This final array contains all original elements sorted in descending order.
+  for (let i = 0; i < arr.length; i++) {
+    sortedArr.unshift(newHeap.removeLargestElement()); // Takes out the root element (largest element in every iteration) from the heap and adds it to the beginning of sortedArr using .unshift().
+  }
+
+  return sortedArr; // Returns an array containing the sorted sequence of elements.
 }
 
-// MaxHeap class; this implementation utilizes a maximum heap which has more practical application compared to a minimum heap.
+// MaxHeap class; this implementation utilizes a maximum heap. 
 
 class MaxHeap {
   constructor() {
@@ -128,40 +129,40 @@ class MaxHeap {
     return (2*index + 2); // Returns the index of the current node's right child.
   }
 
-  swap(a,b) { // Swap nodes between indexes a and b.
+  swap(a,b) { // Swaps nodes between indexes a and b.
     let temp = this.heap[a];
     this.heap[a] = this.heap[b];
     this.heap[b] = temp;
   } 
 
-  insert(element) {
-    this.heap.push(element); // Inserts new element into the last node (either bottom, rightmost node or the first leftmost node of a new level).
-    let currentNodeIndex = this.heap.length - 1; // Initially assigns the index of the last node of the heap to the variable, currentNodeIndex; 'bubbling up'.
-    let parentNodeIndex = this.parentIndex(currentNodeIndex); // Assigns the parent index of this node to the variable, parentNodeIndex.
-    while (this.heap[parentNodeIndex] && this.heap[parentNodeIndex] < this.heap[currentNodeIndex]) { // Execute loop while there exists a parent of the current node AND that parent node is less than the current node.
-      this.swap(parentNodeIndex, currentNodeIndex); // Swap current node with parent node. The current node is now one level up the heap.
-      currentNodeIndex = this.parentIndex(currentNodeIndex); // Bubbling up, currentNodeIndex is now one level up, referencing the position of its original parent node.
-      parentNodeIndex = this.parentIndex(currentNodeIndex); // Bubbling up, parentNodeIndex is the parent node index of the current node defined in previous statement.
+  createMaxHeap(element) { // This method is run for every element in the original array to produce a maximum heap with the largest element at the root.
+    this.heap.push(element); // Inserts an element into the last node.
+    let currentNodePointer = this.heap.length - 1; // Creates a pointer to the current (last) node.
+    let parentNodePointer = this.parentIndex(currentNodePointer); // Creates a pointer to the parent node of the current node.
+    while (this.heap[parentNodePointer] && this.heap[currentNodePointer] > this.heap[parentNodePointer]) { // Execute loop while parentNodePointer points to a parent node inside the heap and the current node is greater than the parent node.
+      this.swap(parentNodePointer, currentNodePointer); // Swap current node with parent node. The current node is now one level up the heap. The larger elements 'bubble up' over the smaller elements to ultimately satisfy the maximum heap property.
+      currentNodePointer = this.parentIndex(currentNodePointer); // Bubbling up, currentNodePointer points to the parent node, which is now the current node.
+      parentNodePointer = this.parentIndex(currentNodePointer); // Bubbling up, parentNodePointer points to the parent of the current node from the previous statement.
     } // Exit loop when you reach a node with no parent OR the parent node is greater than the current node.
-  } // Once every element undergoes this method, the largest element is pushed to the top of the heap.
+  }
 
-  delete() {
+  removeLargestElement() {
     const root = this.heap.shift(); // The root node (first element) is logically the greatest element. It is removed and assigned to the variable, root.
-    this.heap.unshift(this.heap.pop()); // Removes the last element of the heap and places it into the empty root node.
-    let currentNodeIndex = 0; // Initiates an index of 0 at the root node; 'bubbling down'.
-    let leftChild = this.leftChildIndex(currentNodeIndex); // Assigns left child of current node (initially for root) to variable, leftChild.
-    let rightChild = this.rightChildIndex(currentNodeIndex); // Assigns right child of current node (initially for root) to variable, rightChild.
-    while(this.heap[leftChild] && this.heap[leftChild] > this.heap[currentNodeIndex] || this.heap[rightChild] > this.heap[currentNodeIndex]){ // Execute loop while there exists a left child AND if the left OR right child in this level are greater than the current parent node.
-        let max = leftChild; // The left node is declared as the max.
-        if (this.heap[rightChild] && this.heap[rightChild] > this.heap[max]) { // Check if a right child node exists AND it is greater than its sibling, left node.
-            max = rightChild // If so, declare the right node as the max.
-        }
-        this.swap(max, currentNodeIndex); // The child node with the larger value, max, gets swapped with its parent node.
-        currentNodeIndex = max; // Bubbling down, the node that was swapped to a lower level now becomes the max node.
-        leftChild = this.leftChildIndex(max); // Reassign the new left node of the current node.
-        rightChild = this.rightChildIndex(max); // Reassign the new right node of the current node. 
+    this.heap.unshift(this.heap.pop()); // Removes the last element (smallest element) of the heap and places it into the empty root node from the previous statement.
+    let currentNodePointer = 0; // Initiates an index of 0 at the root node. 
+    let leftChild = this.leftChildIndex(currentNodePointer); // Assigns left child of current node (initially for root) to variable, leftChild.
+    let rightChild = this.rightChildIndex(currentNodePointer); // Assigns right child of current node (initially for root) to variable, rightChild.
+    while(this.heap[leftChild] && this.heap[leftChild] > this.heap[currentNodePointer] || this.heap[rightChild] > this.heap[currentNodePointer]){ // Execute loop while there exists a left child AND if the left child is greater than the current parent node OR the right child is greater than the current parent node. 
+      let max = leftChild; // The left node is declared as the max. Max will be a point of reference for determining where an element is 'bubbled down.'
+      if (this.heap[rightChild] && this.heap[rightChild] > this.heap[max]) { // Check if a right child node exists AND it is greater than its sibling, left node.
+          max = rightChild // If so, declare the right node as the max.
+      }
+      this.swap(max, currentNodePointer); // The child node with the larger value, max, gets swapped with its parent node. This step 'bubbles down' the current element to the bottom of the heap, thereby logically pushing the next largest element to the root node. 
+      currentNodePointer = max; // Bubbling down, the node that was swapped to a lower level becomes the new max.
+      leftChild = this.leftChildIndex(max); // Reassign the new left node of the current node.
+      rightChild = this.rightChildIndex(max); // Reassign the new right node of the current node. 
     }
-    return root; // Return the root node. This is placed into the final, sorted heap. 
+    return root; // Return the root node from the first statement inside this method. This is placed into the final, sorted heap. 
   }
 }
 
@@ -282,4 +283,4 @@ const bucketSort = (arr, n = arr.length - 1) => {
 // Output
 //
 
-output.textContent = bubbleSort(arr);
+output.textContent = heapSort(arr);
