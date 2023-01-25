@@ -8,7 +8,7 @@ output.textContent = "Output";
 output.classList.add('output');
 container.append(output);
 
-const arr = [5, 7, 4, 2, 1, 3, 8, 7, 6, 4];
+const arr = [5, 7, 4, 2, 14, 1, 8, 0, 7, 6, 12, 25, 4, 11, 19];
 
 //
 // Value Swap helper function
@@ -284,20 +284,24 @@ const radixSortFunctions =(() => { // An object containing helper functions for 
 
 const bucketSort = (arr, n = arr.length - 1) => {
 
-  const min = Math.min(...arr); // Finds minimum value in the parameter array.
-  const max = Math.max(...arr); // Finds maximum value in the parameter array.
+  const min = Math.min(...arr); // Finds the minimum value in the parameter array.
+  const max = Math.max(...arr); // Finds the maximum value in the parameter array.
 
-  const buckets = Array.from({ length: Math.floor((max - min) / n) + 2 }, () => []); // Creates a new array with 'buckets' where the input elements will be stored.
-  // The elements in the current input array require 2 buckets.
+  const buckets = Array.from({ length: Math.floor((max - min) / n) + 1 }, () => []); // Creates a new array with subarray 'buckets' that will store the input elements.
+
   arr.forEach(el => {
-    buckets[Math.floor((el - min) / n)].push(el); // Take each element and calculate the bucket it will be pushed into inside the buckets array.
+    buckets[Math.floor((el - min) / n)].push(el); // For each element, calculate the bucket it will be pushed into inside the buckets array.
   });
 
-  return buckets.reduce((acc, b) => [...acc, ...b.sort((a, b) => a - b)], []); // Once every element has been placed into its respective bucket, combine the buckets into a single array. This array contains elements sorted in ascending order.  
+  for (let i = 0; i < buckets.length; i++) { // For each bucket inside of buckets...
+     buckets[i] = insertionSort(buckets[i]); // ...sort using Insertion Sort.
+  }
+
+  return arr = [].concat(...buckets); // Returns an array containing the sorted sequence of elements after combining the bucket subarrays, each containing a sorted subsequence of elements. 
 };
 
 //
 // Output
 //
 
-output.textContent = radixSort(arr);
+output.textContent = bucketSort(arr);
