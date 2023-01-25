@@ -8,7 +8,7 @@ output.textContent = "Output";
 output.classList.add('output');
 container.append(output);
 
-const arr = [5, 8, 4, 2, 1, 3, 9, 7, 6];
+const arr = [5, 7, 4, 2, 1, 3, 8, 7, 6, 4];
 
 //
 // Value Swap helper function
@@ -170,7 +170,7 @@ class MaxHeap {
 // Quick Sort
 //
 
-function quickSort(arr, start = 0, end = arr.length - 1) { // Takes an array of elements, a start index, and an end index as parameters.
+const quickSort = (arr, start = 0, end = arr.length - 1) => { // Takes an array of elements, a start index, and an end index as parameters.
   if (start >= end) return; // Base case; returns the array if it contains 0 or 1 element(s). It can no longer be partitioned. Else continue to the next statement.
   let partitionIndex = paritionArr(arr, start, end); // Return the parition index that will divide the array into two subarrays.
   quickSort(arr, start, partitionIndex - 1); // Recursively sort the left half of the array and return it.
@@ -178,7 +178,7 @@ function quickSort(arr, start = 0, end = arr.length - 1) { // Takes an array of 
   return arr; // Once all recursive quickSort calls are executed, the final returned array contains the sorted sequence of elements.
 }
 
-function paritionArr(arr, start, end) {
+const paritionArr = (arr, start, end) => {
   let pivotElement = arr[end]; // Declare the last element in the array the pivot element.
   let indexPointer = start; // Creates a pointer to the current index starting from the first index.
   for (let i = start; i < end; i++) { // For every element in the parameter array...
@@ -196,31 +196,36 @@ function paritionArr(arr, start, end) {
 //
 
 
-function countingSort(arr, n = arr.length) {
-
+const countingSort = (arr, n = arr.length) => {
+  
   let k = Math.max(...arr); // Returns the largest element in the parameter array.
   let count = 0; // Initializes a count variable and assigns an initial value of 0.
 
-  const tempArr = new Array(k+1).fill(0); // Creates a temporary array with a length one more than the value of the largest element and fills every index with a 0.
+  const frequencyArr = new Array(k+1).fill(0); // Creates a temporary array with a length 1 more than the value of the largest element and fills every index with a 0. The additional index tracks the frequency of 0 in addition to numbers [1...k].
+
+  console.log(frequencyArr)
 
   for (let i = 0; i < n; i++) { // For every element in the parameter array...
-    count = arr[i]; // ...count is assigned to the element at the current index of the parameter array. This element value is present at least once.
-    tempArr[count]++; // Since this element is present at least once, that element's corresponding index value in tempArr, representing frequency, is incremeneted by 1.
-  } // When the for loop exits, each tempArr element represents the frequency of each number (tempArr index) in the original, unsorted array.
+    count = arr[i]; // ...count is assigned to the element at the current index of the parameter array. This element is present at least once in the array.
+    frequencyArr[count]++; // Since this element is present at least once, that element's corresponding index value in frequencyArr, representing frequency, is incremeneted by 1.
+  } // When the for loop exits, each frequencyArr element represents the frequency of each number (frequencyArr index number) in the original array.
 
-  for (let i = 1; i <= k; i++) { // Update the count based on the previous index.
-    tempArr[i] = tempArr[i] + tempArr[i-1]; // Update the elements of the frequency array to track cumulative values present at an index, from start to end.
-  } // When the for loop exits, the cumulative value information in the array is used to place element x directly into its position in the output array.
+  const cumulativeArr = [...frequencyArr]; // The elements in frequencyArr are populated into cumulativeArr for naming clarity.
 
-  const outputArr = new Array(n).fill(0); // Creates a new output array which will contain the sorted elements.
+  for (let i = 1; i <= k; i++) { // For every element in cumulativeArr...
 
-  for (let i = n - 1; i >= 0; i--) { // For every element in the parameter array and the temporary array with elements representing cumulative values...
-    count = arr[i]; // Assign count to the element at the current index of the parameter array.
-    outputArr[tempArr[count] - 1] = count; // Retrieve the frequency of that value inside tempArr and subtract this value by 1. This will be the new location of the element from the original array. Assign count to that index in outputArr.
-    tempArr[count] = tempArr[count] - 1; // Decrement the cumulative frequency by 1 to indicate that index in outputArr now contains the correct element.
-  }
+    cumulativeArr[i] = cumulativeArr[i] + cumulativeArr[i-1]; // ...update each element to track the number of elements less than or equal to the index of the current element.
+  } // When the for loop exits, the information in cumulativeArr is used to place every element directly into its final position in the output array.
 
-  return outputArr; // Return the final, sorted array once the last for loop exits. 
+  const sortedArr = new Array(n).fill(0); // Creates a new array which will contain the sorted sequence of elements.
+
+  for (let i = n - 1; i >= 0; i--) { // For every element in the parameter array and cumulativeArr...
+    count = arr[i]; // ...assign count to the element at the current index of the paramter array.
+    sortedArr[cumulativeArr[count] - 1] = count; // Determine the correct index to place the element into. This index is equal to the number of elements less than or equal to the current element, minus 1. Logically, the current element comes after these elements. Subtracting 1 takes into account the additional index we gave frequencyArr.
+    cumulativeArr[count] = cumulativeArr[count] - 1; // Decrementing the cumulative value at this index causes the next input element with the same value, if one exists, to go into the position immediately before the element in the current iteration.
+  } 
+
+  return sortedArr; // Return an array with the sorted sequence of elements.
 }
 
 //
@@ -284,4 +289,4 @@ const bucketSort = (arr, n = arr.length - 1) => {
 // Output
 //
 
-output.textContent = quickSort(arr);
+output.textContent = countingSort(arr);
