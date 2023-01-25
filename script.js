@@ -170,24 +170,25 @@ class MaxHeap {
 // Quick Sort
 //
 
-function quickSort(arr, start = 0, end = arr.length - 1) { // Takes an array of elements to be sorted, a start index, and an end index as parameters.
-  if (start >= end) return; // Base case; returns the array that is empty or has 1 element. This array can not longer be partitioned.
-  let partitionIndex = paritionArr(arr, start, end); // Partition the array based on start and end indexes and return new location of index pointer.
-  quickSort(arr, start, partitionIndex - 1); // Recursively sort the left half of the array.
-  quickSort(arr, partitionIndex + 1, end); // Recursively sort the right half of the array.
+function quickSort(arr, start = 0, end = arr.length - 1) { // Takes an array of elements, a start index, and an end index as parameters.
+  if (start >= end) return; // Base case; returns the array if it contains 0 or 1 element(s). It can no longer be partitioned. Else continue to the next statement.
+  let partitionIndex = paritionArr(arr, start, end); // Return the parition index that will divide the array into two subarrays.
+  quickSort(arr, start, partitionIndex - 1); // Recursively sort the left half of the array and return it.
+  quickSort(arr, partitionIndex + 1, end); // Recursively sort the right half of the array and return it.
+  return arr; // Once all recursive quickSort calls are executed, the final returned array contains the sorted sequence of elements.
 }
 
 function paritionArr(arr, start, end) {
-  let pivotValue = arr[end]; // Declare the element in the last index as the pivot point.
-  let indexPointer = start; // Index of the smaller element; acts like a pointer.
-  for (let i = start; i < end; i++) { // Loop through all elements of the parameter array.
-    if (arr[i] < pivotValue) { // Check if the current element is smaller than the pivot.
-      swapValues(arr, i, indexPointer); // If so, the smaller element is swapped with the largest element encountered in the previous loop iteration.
-      indexPointer++; // Increment the index of the pointer.
+  let pivotElement = arr[end]; // Declare the last element in the array the pivot element.
+  let indexPointer = start; // Creates a pointer to the current index starting from the first index.
+  for (let i = start; i < end; i++) { // For every element in the parameter array...
+    if (arr[i] < pivotElement) { // If the current element is smaller than the pivot element...
+      swapValues(arr, i, indexPointer); // ...swap the current element with the element that indexPointer points to.
+      indexPointer++; // Increment the pointer only if a smaller element is encountered. Once the loop exits, this will be the index of the pivot element.
     }
-  } // Exit the loop
-  swapValues(arr, indexPointer, end); // Once all elements smaller than the pivot are moved to the left, the pivot value at the end is swapped with the value that indexPointer points to. 
-  return indexPointer; // This value will determine the end of the new left array and the start of the new right array when assigned back to paritionIndex in quickSort.
+  }
+  swapValues(arr, indexPointer, end); // Once all elements smaller than the pivot element are moved to the left, the pivot element located at the end is moved to the index pointed to by indexPointer. Every value to the left of this new pivot index is less than the pivot element and every value to the right of this new pivot index is greater than the pivot element.
+  return indexPointer; // The index pointed to by indexPointer will determine the end of the new left array and the start of the new right array when assigned back to paritionIndex in quickSort.
 }
 
 //
@@ -283,4 +284,4 @@ const bucketSort = (arr, n = arr.length - 1) => {
 // Output
 //
 
-output.textContent = heapSort(arr);
+output.textContent = quickSort(arr);
